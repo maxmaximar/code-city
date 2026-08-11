@@ -40,8 +40,10 @@ configuration.
 | the commit history | the timeline, and the time-lapse |
 
 **The physical size of the city is the size of the repository.** A 130-file Go
-router becomes a town of 182 lots. TypeScript becomes 20,400 buildings across
-36 districts. Nothing is sampled away to make rendering easier.
+router becomes a town of 181 lots. TypeScript becomes 20,400 buildings across
+36 districts. Every eligible file gets its own lot — up to 60,000 per
+repository, a guard no real repository in testing has come close to; see
+[What becomes a building](#what-becomes-a-building).
 
 ---
 
@@ -151,6 +153,13 @@ from the `.ts` sitting next to them. 20,400 files are actually authored, and
 Deleted files still get plots — that is what lets the time-lapse show a
 repository *losing* code — but only if they grew past 60 lines, and together they
 never take more than ~38% of the city.
+
+Above 60,000 lots a repository stops fitting one-file-one-building exactly: the
+largest folders start collapsing their smallest files into a single aggregate
+lot, sized by their combined weight, so the layout stays readable instead of
+becoming 60,000 one-pixel slivers. Raise the ceiling with `--max-buildings`. No
+repository in testing — TypeScript included, at 21,352 lots — has come near it;
+`meta.sampled` is `false` unless this guard actually fired.
 
 Two words are used precisely throughout the UI:
 

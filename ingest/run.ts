@@ -310,9 +310,9 @@ export async function ingest(opts: IngestOptions): Promise<IngestOutcome> {
   });
 
   emit("fetching repository metadata", 0.9);
-  const github = opts.noGithub
-    ? null
-    : await fetchRepoMeta(clone.owner ?? owner, clone.name ?? name);
+  const isGithub = /^https:\/\/github\.com\//i.test(clone.url);
+  const github =
+    opts.noGithub || !isGithub ? null : await fetchRepoMeta(clone.owner ?? owner, clone.name ?? name);
 
   steps.push({ label: "ready", value: null, ms: 0 });
 
