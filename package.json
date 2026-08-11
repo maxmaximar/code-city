@@ -1,0 +1,31 @@
+{
+  "name": "codecity",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Any public git repo becomes a 3D city: files are buildings, folders are districts, height = lines of code, color = recency.",
+  "bin": {
+    "codecity": "./bin/codecity.ts"
+  },
+  "scripts": {
+    "ingest": "bun run bin/codecity.ts",
+    "serve": "bun run server/index.ts",
+    "dev": "bun run tools/dev.ts",
+    "dev:viewer": "vite --config viewer/vite.config.ts",
+    "build": "vite build --config viewer/vite.config.ts",
+    "preview": "vite preview --config viewer/vite.config.ts",
+    "shot": "bun run tools/shot.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "three": "^0.180.0"
+  },
+  "devDependencies": {
+    "@fontsource/jetbrains-mono": "^5.1.1",
+    "@types/node": "^26.2.0",
+    "@types/three": "^0.180.0",
+    "playwright": "^1.62.1",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.7"
+  }
+}

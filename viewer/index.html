@@ -1,0 +1,400 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>CODE CITY</title>
+    <link rel="icon" href="data:," />
+  </head>
+  <body>
+    <div class="app">
+      <!-- ── top bar ─────────────────────────────────────────────────────── -->
+      <header class="topbar">
+        <div class="topbar__brand">
+          <span class="brand">CODE CITY</span>
+          <span class="chip"><i class="dot"></i><b id="session-chip">BOOTING</b></span>
+        </div>
+
+        <div class="topbar__main">
+          <span class="tab tab--on">MODEL VIEW</span>
+          <span class="statusline">
+            <b>$</b> <span id="status-text">booting renderer</span>
+          </span>
+        </div>
+
+        <div class="topbar__right">
+          <span class="tab">§03 SYNC</span>
+          <button class="btn" type="button" id="resync" title="Fetch new commits and rebuild">
+            <svg viewBox="0 0 12 12" aria-hidden="true">
+              <path d="M10.3 5.1A4.4 4.4 0 1 0 10 8M10.6 1.9v3.2H7.4" />
+            </svg>
+            RESYNC
+          </button>
+          <button class="btn btn--primary" type="button" id="new-repo">
+            <svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 1.6v8.8M1.6 6h8.8" /></svg>
+            NEW REPOSITORY
+          </button>
+        </div>
+      </header>
+
+      <!-- ── body ────────────────────────────────────────────────────────── -->
+      <main class="body">
+        <aside class="rail">
+          <!-- §01 REPOSITORY -->
+          <section class="panel" id="panel-repo">
+            <header class="panel__head">
+              <h2>§01 REPOSITORY</h2>
+              <span class="chip"><i class="dot"></i><b id="repo-chip">CACHED</b></span>
+            </header>
+
+            <div class="repo">
+              <svg class="repo__mark" viewBox="0 0 34 34" aria-hidden="true">
+                <path d="M17 2.6 30.2 10 17 17.4 3.8 10 17 2.6Z" />
+                <path d="M3.8 17 17 24.4 30.2 17" />
+                <path d="M3.8 24 17 31.4 30.2 24" />
+              </svg>
+              <div class="repo__id">
+                <div class="repo__name" id="repo-name">—</div>
+                <div class="repo__url" id="repo-url">&nbsp;</div>
+              </div>
+            </div>
+
+            <div class="stats" id="repo-stats">
+              <div class="cell"><span class="cell__k">STARS</span><span class="cell__v" id="s-stars">—</span></div>
+              <div class="cell"><span class="cell__k">FORKS</span><span class="cell__v" id="s-forks">—</span></div>
+              <div class="cell"><span class="cell__k">CONTRIBUTORS</span><span class="cell__v" id="s-contrib">—</span></div>
+              <div class="cell"><span class="cell__k">COMMITS</span><span class="cell__v" id="s-commits">—</span></div>
+              <div class="cell"><span class="cell__k">FILES</span><span class="cell__v" id="s-files">—</span></div>
+              <div class="cell"><span class="cell__k">LINES OF CODE</span><span class="cell__v" id="s-loc">—</span></div>
+            </div>
+
+            <div class="head">
+              <span class="head__k">LATEST COMMIT</span>
+              <span class="head__v"><b id="repo-head">—</b><i id="repo-head-date">—</i></span>
+              <span class="head__subject" id="repo-head-subject"></span>
+            </div>
+
+            <footer class="panel__foot">
+              <span id="repo-updated">SYNCED —</span>
+              <span class="chip"><i class="dot dot--fresh"></i>ON DISK</span>
+            </footer>
+          </section>
+
+          <!-- §02 CITY METRICS -->
+          <section class="panel" id="panel-metrics">
+            <header class="panel__head">
+              <h2>§02 CITY METRICS</h2>
+              <span class="chip"><i class="dot"></i>FRAME</span>
+            </header>
+
+            <div class="stats stats--metrics">
+              <div class="cell"><span class="cell__k">DENSITY</span><span class="cell__v" id="m-density">—</span></div>
+              <div class="cell"><span class="cell__k">CHURN</span><span class="cell__v" id="m-churn">—</span></div>
+              <div class="cell"><span class="cell__k">GROWTH</span><span class="cell__v" id="m-growth">—</span></div>
+              <div class="cell"><span class="cell__k">BUILDINGS</span><span class="cell__v" id="m-buildings">—</span></div>
+              <div class="cell"><span class="cell__k">DISTRICTS</span><span class="cell__v" id="m-districts">—</span></div>
+              <div class="cell"><span class="cell__k">AVG HEIGHT</span><span class="cell__v" id="m-avg">—</span></div>
+            </div>
+
+            <div class="legend">
+              <span>OLDER</span>
+              <i class="legend__ramp"></i>
+              <span>NEWER</span>
+            </div>
+          </section>
+
+          <!-- §03 SYSTEM STATUS -->
+          <section class="panel" id="panel-status">
+            <header class="panel__head">
+              <h2>§03 SYSTEM STATUS</h2>
+              <span class="chip"><i class="dot"></i>DONE</span>
+            </header>
+            <ul class="log" id="log"></ul>
+          </section>
+
+          <div class="meta">
+            <div class="cell"><span class="cell__k">BRANCH</span><span class="cell__v" id="meta-branch">—</span></div>
+            <div class="cell"><span class="cell__k">RESOLUTION</span><span class="cell__v" id="meta-frames">—</span></div>
+            <div class="cell"><span class="cell__k">BUCKET</span><span class="cell__v" id="meta-bucket">—</span></div>
+            <div class="cell"><span class="cell__k">SAMPLE</span><span class="cell__v" id="meta-sample">—</span></div>
+          </div>
+        </aside>
+
+        <!-- ── stage ─────────────────────────────────────────────────────── -->
+        <section class="stage">
+          <div class="scene" id="scene">
+            <canvas id="canvas"></canvas>
+            <div class="scene__labels" id="labels"></div>
+
+            <div class="scene__title">
+              <span class="tab tab--plain">CITY VIEW</span>
+              <span class="chip"><i class="dot"></i><b id="view-chip">ORBIT</b></span>
+            </div>
+
+            <!-- search -->
+            <div class="search" id="search">
+              <div class="search__field">
+                <svg viewBox="0 0 12 12" aria-hidden="true"><circle cx="5.2" cy="5.2" r="3.4"/><path d="M7.8 7.8 10.6 10.6"/></svg>
+                <input id="search-input" type="text" spellcheck="false" autocomplete="off"
+                       placeholder="SEARCH FILES, FOLDERS, DISTRICTS   /" />
+                <kbd>/</kbd>
+              </div>
+              <div class="search__filters">
+                <select id="search-language" aria-label="Language"></select>
+                <select id="search-district" aria-label="District"></select>
+                <button type="button" id="search-isolate" title="Dim everything outside the chosen district">ISOLATE</button>
+              </div>
+              <div class="search__results" id="search-results" hidden></div>
+            </div>
+
+            <!-- view modes -->
+            <div class="modes" id="modes">
+              <span class="modes__k">COLOR</span>
+              <button type="button" class="is-on" data-color="recency">RECENCY</button>
+              <button type="button" data-color="language">LANGUAGE</button>
+              <span class="modes__k">HEIGHT</span>
+              <span class="modes__fixed" title="Height always encodes lines of code">LOC</span>
+            </div>
+
+            <div class="fsbar" id="fsbar">
+              <button type="button" id="fs-exit" title="Exit fullscreen (Esc)">
+                <svg viewBox="0 0 12 12" aria-hidden="true"><path d="M4.4 1.4v3H1.4M7.6 1.4v3h3M7.6 10.6v-3h3M4.4 10.6v-3H1.4"/></svg>
+                EXIT
+              </button>
+              <span class="rule"></span>
+              <button type="button" id="fs-search">SEARCH</button>
+              <button type="button" id="fs-top">TOP VIEW</button>
+              <span class="rule"></span>
+              <span class="fsbar__frame" id="fs-frame">—</span>
+            </div>
+
+            <div class="compass">
+              <div class="compass__rose">
+                <span class="compass__n">N</span>
+                <span class="compass__e">E</span>
+                <span class="compass__s">S</span>
+                <span class="compass__w">W</span>
+                <span class="compass__tickw"></span>
+                <span class="compass__ticke"></span>
+                <svg class="compass__needle" id="needle" viewBox="0 0 24 34" aria-hidden="true">
+                  <path d="M12 2 20.5 31 12 25.5 3.5 31Z" />
+                </svg>
+              </div>
+              <button class="compass__btn" type="button" id="top-view">TOP VIEW</button>
+            </div>
+
+            <!-- selected building -->
+            <aside class="inspect" id="inspect" hidden>
+              <header class="inspect__head">
+                <h2>§04 BUILDING</h2>
+                <button class="inspect__close" type="button" id="inspect-close" aria-label="Close">✕</button>
+              </header>
+              <div class="inspect__body">
+                <div class="inspect__name" id="inspect-name">—</div>
+                <div class="inspect__path" id="inspect-path">—</div>
+                <div class="inspect__grid">
+                  <div class="cell"><span class="cell__k">LINES</span><span class="cell__v" id="inspect-loc">—</span></div>
+                  <div class="cell"><span class="cell__k">SIZE</span><span class="cell__v" id="inspect-size">—</span></div>
+                  <div class="cell"><span class="cell__k">LAST TOUCHED</span><span class="cell__v" id="inspect-touched">—</span></div>
+                  <div class="cell"><span class="cell__k">DISTRICT</span><span class="cell__v" id="inspect-district">—</span></div>
+                </div>
+                <div class="inspect__kind" id="inspect-kind">FILE</div>
+              </div>
+            </aside>
+          </div>
+
+          <!-- §02 TIMELINE -->
+          <section class="panel timeline">
+            <header class="panel__head panel__head--bare">
+              <h2>§02 TIMELINE</h2>
+              <span class="chip"><i class="dot"></i><b id="tl-chip">READY</b></span>
+              <span class="tl__frame" id="tl-frame">FRAME — / —</span>
+            </header>
+
+            <div class="tl__plot" id="tl-plot">
+              <div class="tl__bars" id="tl-bars"></div>
+              <div class="tl__mask" id="tl-mask"></div>
+              <div class="tl__base"></div>
+              <div class="tl__head" id="tl-head"><i></i><b></b></div>
+            </div>
+
+            <div class="tl__axis" id="tl-axis"></div>
+
+            <div class="tl__controls">
+              <button class="btn btn--sq play" type="button" id="tl-play" aria-label="Play">
+                <svg class="play__go" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.5 2.2 9.6 6 3.5 9.8Z"/></svg>
+                <svg class="play__stop" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.4 2.4h2v7.2h-2zM6.6 2.4h2v7.2h-2z"/></svg>
+              </button>
+              <button class="icon" type="button" id="tl-prev" aria-label="Previous frame">
+                <svg viewBox="0 0 14 12" aria-hidden="true"><path d="M3 2.2h1.1v7.6H3zM12 2.2 5.6 6 12 9.8Z"/></svg>
+              </button>
+              <button class="icon" type="button" id="tl-next" aria-label="Next frame">
+                <svg viewBox="0 0 14 12" aria-hidden="true"><path d="M9.9 2.2H11v7.6H9.9zM2 2.2 8.4 6 2 9.8Z"/></svg>
+              </button>
+              <span class="rule"></span>
+              <button class="speed" type="button" id="tl-speed" data-speed="1">1x</button>
+              <span class="rule"></span>
+              <div class="cell"><span class="cell__k">DATE</span><span class="cell__v" id="c-date">—</span></div>
+              <span class="rule"></span>
+              <div class="cell"><span class="cell__k">COMMIT</span><span class="cell__v" id="c-commit">—</span></div>
+              <span class="rule"></span>
+              <div class="cell"><span class="cell__k">BUILDINGS</span><span class="cell__v" id="c-buildings">—</span></div>
+              <span class="rule"></span>
+              <div class="cell"><span class="cell__k">LOC</span><span class="cell__v" id="c-loc">—</span></div>
+              <span class="grow"></span>
+              <button class="btn" type="button" id="tl-fly">
+                <svg viewBox="0 0 12 12" aria-hidden="true"><path d="M1.4 4V1.4h2.6M8 1.4h2.6V4M10.6 8v2.6H8M4 10.6H1.4V8"/></svg>
+                FLYTHROUGH
+              </button>
+              <button class="btn" type="button" id="fullscreen" title="City fullscreen (F11-style)">
+                <svg viewBox="0 0 12 12" aria-hidden="true"><path d="M1.4 4.2V1.4h2.8M7.8 1.4h2.8v2.8M10.6 7.8v2.8H7.8M4.2 10.6H1.4V7.8"/></svg>
+                FULLSCREEN
+              </button>
+              <button class="btn btn--sq" type="button" id="native-fullscreen" aria-label="Browser fullscreen">
+                <svg viewBox="0 0 12 12" aria-hidden="true"><path d="M1.4 4.2V1.4h2.8M7.8 1.4h2.8v2.8M10.6 7.8v2.8H7.8M4.2 10.6H1.4V7.8"/></svg>
+              </button>
+            </div>
+          </section>
+        </section>
+      </main>
+
+      <!-- ── §05 architecture ──────────────────────────────────────────── -->
+      <section class="page" id="section-arch">
+        <header class="page__head">
+          <div>
+            <h2>§05 ARCHITECTURE</h2>
+            <p>Every district is a folder. Area follows weight, height follows lines of code. Select one to fly to it.</p>
+          </div>
+          <span class="page__meta" id="arch-summary">—</span>
+        </header>
+        <div class="arch" id="arch-grid"></div>
+      </section>
+
+      <!-- ── §06 evolution ─────────────────────────────────────────────── -->
+      <section class="page" id="section-evo">
+        <header class="page__head">
+          <div>
+            <h2>§06 EVOLUTION</h2>
+            <p>Commit volume, lines of code and building count across the repository's whole history.</p>
+          </div>
+          <span class="page__meta" id="evo-meta">—</span>
+        </header>
+
+        <div class="evo">
+          <div class="evo__legend">
+            <span class="evo__key evo__key--bar">COMMITS</span>
+            <span class="evo__key evo__key--loc">LINES OF CODE</span>
+            <span class="evo__key evo__key--buildings">BUILDINGS</span>
+            <span class="evo__now" id="evo-now">—</span>
+          </div>
+          <svg id="evo-chart" class="evo__chart" preserveAspectRatio="none" role="img" aria-label="Repository history"></svg>
+        </div>
+
+        <div class="compare">
+          <header>
+            <h3>COMPARE</h3>
+            <p>Pick two points in history and see exactly what the repository did between them.</p>
+          </header>
+
+          <div class="compare__picks">
+            <div class="compare__pick">
+              <span class="cell__k">A</span>
+              <input id="evo-a" type="range" min="0" max="1" step="1" />
+              <b id="evo-a-label">—</b>
+              <button class="btn" type="button" id="evo-jump-a">SHOW IN CITY</button>
+            </div>
+            <div class="compare__pick">
+              <span class="cell__k">B</span>
+              <input id="evo-b" type="range" min="0" max="1" step="1" />
+              <b id="evo-b-label">—</b>
+              <button class="btn" type="button" id="evo-jump-b">SHOW IN CITY</button>
+            </div>
+          </div>
+
+          <div class="diff" id="evo-diff"></div>
+        </div>
+      </section>
+
+      <!-- ── §07 repository explorer ───────────────────────────────────── -->
+      <section class="page" id="section-explorer">
+        <header class="page__head">
+          <div>
+            <h2>§07 REPOSITORY EXPLORER</h2>
+            <p>Every file the city is built from, and every file it deliberately leaves out.</p>
+          </div>
+          <span class="page__meta" id="ex-count">—</span>
+        </header>
+
+        <div class="ex__coverage" id="ex-coverage"></div>
+        <div class="ex__excluded" id="ex-excluded"></div>
+
+        <div class="ex__controls">
+          <input id="ex-query" type="text" spellcheck="false" autocomplete="off" placeholder="FILTER BY PATH" />
+          <select id="ex-language" aria-label="Language"></select>
+          <select id="ex-district" aria-label="District"></select>
+          <select id="ex-sort" aria-label="Sort">
+            <option value="loc">SORT BY LINES</option>
+            <option value="size">SORT BY SIZE</option>
+            <option value="recent">SORT BY RECENCY</option>
+            <option value="path">SORT BY PATH</option>
+          </select>
+        </div>
+
+        <div class="ex__table">
+          <div class="ex__head">
+            <span>PATH</span><span>DISTRICT</span><span>LANGUAGE</span>
+            <span>LINES</span><span>SIZE</span><span>LAST TOUCHED</span>
+          </div>
+          <div id="ex-rows"></div>
+        </div>
+        <button class="btn ex__more" type="button" id="ex-more" hidden>SHOW MORE</button>
+      </section>
+
+      <footer class="page__footer">
+        <span>CODE CITY</span>
+        <span id="footer-repo">—</span>
+        <span>every number on this page is read from the repository itself</span>
+      </footer>
+    </div>
+
+    <!-- ── onboarding ────────────────────────────────────────────────────── -->
+    <div class="onboard" id="onboard" hidden>
+      <div class="onboard__card">
+        <button class="onboard__close" type="button" id="onboard-close" aria-label="Close" hidden>✕</button>
+
+        <div class="onboard__mark">
+          <svg viewBox="0 0 34 34" aria-hidden="true">
+            <path d="M17 2.6 30.2 10 17 17.4 3.8 10 17 2.6Z" />
+            <path d="M3.8 17 17 24.4 30.2 17" />
+            <path d="M3.8 24 17 31.4 30.2 24" />
+          </svg>
+        </div>
+
+        <h1>BUILD A CITY FROM ANY PUBLIC REPOSITORY</h1>
+        <p class="onboard__lede">
+          Files become buildings, folders become districts, height is lines of code
+          and colour is how recently the code changed.
+        </p>
+
+        <form class="onboard__form" id="onboard-form">
+          <input
+            id="onboard-url"
+            type="text"
+            spellcheck="false"
+            autocomplete="off"
+            placeholder="https://github.com/owner/repo"
+          />
+          <button class="btn btn--primary" type="submit" id="onboard-submit">ANALYZE REPOSITORY</button>
+        </form>
+
+        <div class="onboard__bar"><i id="onboard-bar"></i></div>
+        <ul class="onboard__stages" id="onboard-stages"></ul>
+        <p class="onboard__error" id="onboard-error"></p>
+
+        <div class="onboard__recent" id="onboard-recent" hidden></div>
+      </div>
+    </div>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

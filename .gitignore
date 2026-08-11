@@ -1,0 +1,12 @@
+node_modules/
+dist/
+
+# clones and generated cities — regenerate with `bun run bin/codecity.ts <repo>`
+data/cache/
+data/out/
+
+# working screenshots; the ones the README uses live in docs/media
+shots/
+
+.DS_Store
+*.log
