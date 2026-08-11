@@ -4,7 +4,7 @@
 $ CODE CITY
 ```
 
-**Turn any public git repository into a living 3D city — and explore its architecture and its history.**
+**Turn any Git repository into a living 3D city — and explore its architecture and its history.**
 
 ![CodeCity rendering the React repository as a 3D city](docs/media/hero.png)
 
@@ -16,13 +16,19 @@ Files are buildings. Folders are districts. Height is lines of code. Colour is h
 recently the code changed. Paste a repository URL and the city assembles itself
 in front of you, then replays the whole git history as a time-lapse.
 
+GitHub, GitLab, Bitbucket and self-hosted Git all work — anything `git clone` can
+reach.
+
 ```bash
+git clone https://github.com/maxmaximar/code-city.git
+cd code-city
 bun install
-bun run dev          # → http://127.0.0.1:5180
+bun run dev
 ```
 
-Paste a repository URL. That is the whole setup — no account, no token, no
-configuration.
+Open `http://127.0.0.1:5180`, paste a repository URL, and press **ANALYZE
+REPOSITORY**. Once CodeCity is running there is nothing else to set up — no
+account, no token, no API key.
 
 ---
 
@@ -94,16 +100,26 @@ repository, a guard no real repository in testing has come close to; see
 - [Bun](https://bun.sh) 1.1+
 - `git` on your `PATH`
 - A browser with WebGL 2 — any laptop from the last several years
+- Developed and tested on macOS; Linux should work with the same two
+  dependencies. Windows is untested.
 
 ```bash
+git clone https://github.com/maxmaximar/code-city.git
+cd code-city
 bun install
 bun run dev
 ```
 
 `bun run dev` starts two things: the ingest API on `:5181` and the viewer on
-`:5180`. Open the viewer and paste a repository URL — `owner/repo`,
-`https://github.com/owner/repo`, or the same with `.git`. GitLab, Bitbucket and
-self-hosted git work too; only the stars/forks readout is GitHub-specific.
+`:5180`. Open `http://127.0.0.1:5180`, paste a repository URL, and press
+**ANALYZE REPOSITORY**.
+
+**What you can paste.** For GitHub, the `owner/repo` shorthand works, as does
+`https://github.com/owner/repo` or the same URL ending in `.git`. For every
+other host give the full clone URL — `https://gitlab.com/group/project.git`,
+Bitbucket, or your own server. Only the stars/forks readout is GitHub-specific;
+everything else comes out of the clone, so a self-hosted repository gets exactly
+the same city.
 
 **Without the UI**
 
@@ -122,12 +138,14 @@ either at any time.
 
 Unauthenticated GitHub is capped at 60 requests/hour, and its commits endpoint
 will not give per-file line deltas cheaply at any scale. A bare clone plus
-`git log --numstat` has no rate limit, is faster, works on any git host, and
-works on private repositories you already have local access to.
+`git log --numstat` avoids the API rate limit entirely, is faster, works on any
+git host, and works on private repositories you already have local access to.
 
-Exactly **one** GitHub API call is made per ingest — `/repos/{owner}/{repo}`, for
-stars and forks. The contributor count is the distinct author count from the
-parsed history, so there is no second call and no Link-header paging.
+**At most one** GitHub API call is made per ingest — `/repos/{owner}/{repo}`, for
+stars and forks. Zero on a cache hit, since an unchanged HEAD returns before the
+request, and zero for non-GitHub hosts. The contributor count is the distinct
+author count from the parsed history, so there is no second call and no
+Link-header paging.
 
 ---
 
@@ -294,15 +312,18 @@ makes screenshots reproducible.
 
 ## Limitations
 
-- **Clones are full-history by default.** A large repository takes as long as
-  `git clone` takes. There is a `--depth` flag, but on very large repos a shallow
-  clone can be *slower and bigger* than a full one, because the server cannot
-  reuse its on-disk deltas.
+- **Clones are full-history by default, and they are kept.** A large repository
+  takes as long as `git clone` takes and costs real disk: `microsoft/TypeScript`
+  is 2.1 GB in `data/cache/`, plus a 4.5 MB city in `data/out/`. Delete either
+  directory at any time. There is a `--depth` flag, but on very large repos a
+  shallow clone can be *slower and bigger* than a full one, because the server
+  cannot reuse its on-disk deltas.
 - **Renames are delete + add.** `--no-renames` keeps the parser to one line format
   and makes the time-lapse read correctly, at the cost of rename tracking.
 - **One repository at a time.** No cross-repository comparison.
-- **Private repositories** work from the CLI if you already have local git access;
-  the browser flow does not do authentication.
+- **Public repositories work straight from the browser.** Private ones work from
+  the CLI when your local git credentials already have access; the browser flow
+  does no authentication of its own.
 - **Desktop only.** The layout targets a wide viewport; there is no mobile mode.
 - **Video export is not built.** The flythrough exists; capturing it does not.
 
